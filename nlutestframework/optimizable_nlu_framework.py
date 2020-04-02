@@ -25,8 +25,8 @@ class OptimizableNLUFramework(NLUFramework):
         """
         Args:
             intent_threshold: Some frameworks don't have the None-intent or a comparable, compatible
-                concept built-in. For these frameworks, this implementation selects the None-intent based on
-                the highest confidence of all intents. If the highest confidence is below
+                concept built-in. For these frameworks, this implementation selects the None-intent
+                based on the highest confidence of all intents. If the highest confidence is below
                 intent_threshold, the rated intent is interpreted as the None-intent instead.
                 Confidence values range from 0 to 1, the default value of intent_threshold is 0.3.
             optimize_intent_threshold: When this flag is set, the value of :obj:`intent_threshold`
