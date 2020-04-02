@@ -19,21 +19,26 @@ cache:
 install_dependencies:
   stage: install_dependencies
   script:
-    - pip install virtualenv setuptools pytest pylint mypy
+    - pip install virtualenv setuptools
     - virtualenv venv
     - source venv/bin/activate
     - python setup.py install
+    - pip install pytest pylint mypy
 lint:
   stage: lint
   before_script:
     - source venv/bin/activate
   script: pylint nlutestframework/
+  after_script:
+    - deactivate
 
 typing:
   stage: lint
   before_script:
     - source venv/bin/activate
   script: mypy nlutestframework/ --ignore-missing-imports --strict
+  after_script:
+    - deactivate
   dependencies:
     - install_dependencies
 
@@ -70,5 +75,7 @@ test:
   before_script:
     - source venv/bin/activate
   script: pytest
+  after_script:
+    - deactivate
   dependencies:
     - install_dependencies
