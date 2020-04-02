@@ -1,0 +1,32 @@
+global:
+  iterations: 5
+data_sets:
+  AskUbuntuCorpus:
+    class: SimpleJSON
+    data_path: ../data/corpora/AskUbuntuCorpus.json
+    validation_percentage: 50
+  ChatbotCorpus:
+    class: SimpleJSON
+    data_path: ../data/corpora/ChatbotCorpus.json
+    validation_percentage: 50
+  WebApplicationsCorpus:
+    class: SimpleJSON
+    data_path: ../data/corpora/WebApplicationsCorpus.json
+    validation_percentage: 50
+frameworks:
+  Rasa NLU:
+    class: Rasa
+    pipeline: pretrained
+  #    optimize_intent_threshold: yes
+  #    optimizer_iterations: 10
+  #    optimizer_grid_search_step_size: 0.01
+  Snips NLU:
+    class: Snips
+#    Dialogflow:
+#      class: Dialogflow
+#      time_zone: <time_zone_here> # For example: Europe/Berlin
+#    LUIS:
+#      class: LUIS
+#      endpoint: <endpoint_here> # For example: https://westeurope.api.cognitive.microsoft.com/
+#      authoring_key: <authoring_key_here>
+#      runtime_key: <runtime_key_here> # Or omit the runtime key to use the authoring key for both

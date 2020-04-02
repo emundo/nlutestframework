@@ -1,0 +1,74 @@
+image: python:3.7.6
+
+stages:
+  - install_dependencies
+  - lint
+  - analysis
+  - test
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  key: "$CI_COMMIT_REF_NAME"
+  untracked: true
+  paths:
+    - .cache/pip
+    - venv/
+
+install_dependencies:
+  stage: install_dependencies
+  script:
+    - pip install virtualenv setuptools pytest pylint mypy
+    - virtualenv venv
+    - source venv/bin/activate
+    - python setup.py install
+lint:
+  stage: lint
+  before_script:
+    - source venv/bin/activate
+  script: pylint nlutestframework/
+
+typing:
+  stage: lint
+  before_script:
+    - source venv/bin/activate
+  script: mypy nlutestframework/ --ignore-missing-imports --strict
+  dependencies:
+    - install_dependencies
+
+.sonarqube-base:
+  stage: analysis
+  image: emundo/docker-compose-openjdk-node-sonarqube-scanner:latest
+  retry:
+    max: 2
+    when: runner_system_failure
+  allow_failure: true
+  dependencies:
+    - install_dependencies
+
+sonarqube-merge-request:
+  extends:
+    - .sonarqube-base
+  script:
+    - sonar-scanner -Dsonar.analysis.mode=preview -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME
+  except:
+    - master
+    - tags
+    - schedules
+
+sonarqube-master-scan:
+  extends:
+    - .sonarqube-base
+  script:
+    - sonar-scanner
+  only:
+    - master
+
+test:
+  stage: test
+  before_script:
+    - source venv/bin/activate
+  script: pytest
+  dependencies:
+    - install_dependencies
